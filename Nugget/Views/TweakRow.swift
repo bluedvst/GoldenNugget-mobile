@@ -17,7 +17,7 @@ struct TweakRow: View {
     @ObservedObject private var hotload = HotLoadService.shared
     @ObservedObject private var device = DeviceIdentityMonitor.shared
     private var safetyWarning: String? { hotload.currentPolicy.flag(for: spec) }
-    private var warningText: String { [spec.warning, safetyWarning].compactMap { $0 }.joined(separator: "\n\n") }
+    private var warningText: String { [spec.warning, safetyWarning].compactMap { $0 }.map(ChineseTweaks.text).joined(separator: "\n\n") }
     let spec: TweakSpec
     @Binding private var selection: TweakSelection
     private let readOn: () -> Bool
@@ -73,7 +73,7 @@ struct TweakRow: View {
                     Text(ChineseTweaks.text(spec.title))
                     if let safetyWarning { NativeSafetyNote(safetyWarning) }
                     TweakNumberField(spec: spec, selection: $selection)
-                    TweakRowCaption(id: spec.id, detail: [spec.numberHint, spec.warning].compactMap { $0 }.joined(separator: "\n"))
+                    TweakRowCaption(id: spec.id, detail: [spec.numberHint, spec.warning].compactMap { $0 }.map(ChineseTweaks.text).joined(separator: "\n"))
                 }
             }
             if spec.kind == .toggle, let safetyWarning { NativeSafetyNote(safetyWarning) }
