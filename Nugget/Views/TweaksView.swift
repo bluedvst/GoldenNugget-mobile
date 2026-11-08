@@ -276,7 +276,7 @@ struct TweaksView: View {
                     }
                 } header: {
                     NativeCollapsibleHeader(
-                        title: String(localized: "\(section.rawValue) (\(on)/\(specs.count))"),
+                        title: String(localized: "\(ChineseTweaks.text(section.rawValue)) (\(on)/\(specs.count))"),
                         collapsed: collapsed)
                 }
             }
@@ -351,7 +351,7 @@ struct TweaksView: View {
     /// (`gui/ios/tweaks.py`: `self.search.matches(title, description, tid.name)`).
     /// The registry id is the `tid.name` here.
     private func matchesSearch(_ spec: TweakSpec) -> Bool {
-        searchMatches(query: searchText, spec.title, spec.detail ?? "", spec.id)
+        searchMatches(query: searchText, spec.title, ChineseTweaks.text(spec.title), spec.detail ?? "", ChineseTweaks.text(spec.detail ?? ""), spec.id)
     }
 
     /// The reference's `IOSSearchEmpty`: shown only while a query is live and
@@ -421,3 +421,4 @@ struct TweaksView: View {
 /// The copy comes from the registry (`TweakSpec.detail`, GoldenNugget's
 /// `description=`), not from a second hand-written table — one source of truth
 /// for "what does this switch do".
+

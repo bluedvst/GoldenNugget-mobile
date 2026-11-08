@@ -56,21 +56,21 @@ struct TweakRow: View {
             switch spec.kind {
             case .toggle:
                 Toggle(isOn: toggleBinding) {
-                    TweakRowLabel(title: spec.title, id: spec.id, detail: spec.detail)
+                    TweakRowLabel(title: ChineseTweaks.text(spec.title), id: spec.id, detail: spec.detail.map(ChineseTweaks.text))
                 }
             case .text:
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(spec.title)
+                    Text(ChineseTweaks.text(spec.title))
                     if let safetyWarning { NativeSafetyNote(safetyWarning) }
                     TextField("(empty = clear)", text: textBinding)
                         .textFieldStyle(.roundedBorder)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
-                    TweakRowCaption(id: spec.id, detail: [spec.detail, spec.warning].compactMap { $0 }.joined(separator: "\n"))
+                    TweakRowCaption(id: spec.id, detail: [spec.detail, spec.warning].compactMap { $0 }.map(ChineseTweaks.text).joined(separator: "\n"))
                 }
             case .number:
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(spec.title)
+                    Text(ChineseTweaks.text(spec.title))
                     if let safetyWarning { NativeSafetyNote(safetyWarning) }
                     TweakNumberField(spec: spec, selection: $selection)
                     TweakRowCaption(id: spec.id, detail: [spec.numberHint, spec.warning].compactMap { $0 }.joined(separator: "\n"))
@@ -78,7 +78,7 @@ struct TweakRow: View {
             }
             if spec.kind == .toggle, let safetyWarning { NativeSafetyNote(safetyWarning) }
         }
-        .alert(spec.title, isPresented: $showWarning) {
+        .alert(ChineseTweaks.text(spec.title), isPresented: $showWarning) {
             Button("Cancel", role: .cancel) {}
             Button("Continue anyway", role: .destructive) { writeOn(true) }
         } message: {
@@ -188,3 +188,4 @@ private struct TweakRowCaption: View {
         }
     }
 }
+
