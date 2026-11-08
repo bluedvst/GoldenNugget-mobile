@@ -51,12 +51,30 @@ struct TweakRow: View {
         self.writeOn = writeOn ?? { selection.wrappedValue.setOn($0, for: spec) }
     }
 
+    private var displayedDetail: String? {
+        guard ChineseTweaks.isSimplifiedChinese else { return spec.detail }
+        if spec.id == DaemonGroups.screenTime.id {
+            return "将一个 0 字节文件写入并覆盖 \(DaemonGroups.screenTime.path)。"
+        }
+        if let group = DaemonGroups.all.first(where: { "Daemon.\($0.name)" == spec.id }) {
+            if let information = group.information { return ChineseTweaks.text(information) }
+            return "禁用 \(group.labels.count) 个 launchd 守护进程：" + group.labels.joined(separator: ", ") + "。"
+        }
+        return spec.detail.map(ChineseTweaks.text)
+    }
+
+    private var displayedNumberHint: String {
+        guard ChineseTweaks.isSimplifiedChinese else { return spec.numberHint }
+        let integral = spec.step == spec.step.rounded() && spec.minValue == spec.minValue.rounded()
+        return "\(spec.minValue)–\(spec.maxValue)，步长 \(spec.step)" + (integral ? "" : "（小数）")
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             switch spec.kind {
             case .toggle:
                 Toggle(isOn: toggleBinding) {
-                    TweakRowLabel(title: ChineseTweaks.text(spec.title), id: spec.id, detail: spec.detail.map(ChineseTweaks.text))
+                    TweakRowLabel(title: ChineseTweaks.text(spec.title), id: spec.id, detail: displayedDetail)
                 }
             case .text:
                 VStack(alignment: .leading, spacing: 6) {
@@ -66,14 +84,14 @@ struct TweakRow: View {
                         .textFieldStyle(.roundedBorder)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
-                    TweakRowCaption(id: spec.id, detail: [spec.detail, spec.warning].compactMap { $0 }.map(ChineseTweaks.text).joined(separator: "\n"))
+                    TweakRowCaption(id: spec.id, detail: [displayedDetail, spec.warning].compactMap { $0 }.map(ChineseTweaks.text).joined(separator: "\n"))
                 }
             case .number:
                 VStack(alignment: .leading, spacing: 6) {
                     Text(ChineseTweaks.text(spec.title))
                     if let safetyWarning { NativeSafetyNote(safetyWarning) }
                     TweakNumberField(spec: spec, selection: $selection)
-                    TweakRowCaption(id: spec.id, detail: [spec.numberHint, spec.warning].compactMap { $0 }.map(ChineseTweaks.text).joined(separator: "\n"))
+                    TweakRowCaption(id: spec.id, detail: [displayedDetail, displayedNumberHint, spec.warning].compactMap { $0 }.map(ChineseTweaks.text).joined(separator: "\n"))
                 }
             }
             if spec.kind == .toggle, let safetyWarning { NativeSafetyNote(safetyWarning) }

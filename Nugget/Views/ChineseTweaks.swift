@@ -611,10 +611,16 @@ enum ChineseTweaks {
         "Disable Apple Feature Trials": "禁用 Apple 功能试验",
         "Disable Social Account Helper": "禁用社交账户助手",
         "Disable Screen Time Agent": "禁用屏幕使用时间代理",
+        "Analytics, Data Tracking & Logging": "分析、数据跟踪与日志",
+        "Disrupts temperature monitoring; can cause instability.": "会影响温度监控，可能导致系统不稳定。",
+        "Reported to cause repeated interface restarts with AirPods when disabled.": "据报告，禁用后使用 AirPods 可能导致界面反复重启。",
     ]
-    static func text(_ value: String) -> String {
+    static var isSimplifiedChinese: Bool {
         let language = Bundle.main.preferredLocalizations.first ?? "en"
-        guard language == "zh-Hans" || language.hasPrefix("zh-Hans-") || language == "zh_CN" else { return value }
+        return language == "zh-Hans" || language.hasPrefix("zh-Hans-") || language == "zh_CN"
+    }
+    static func text(_ value: String) -> String {
+        guard isSimplifiedChinese else { return value }
         return entries[value] ?? value
     }
 }

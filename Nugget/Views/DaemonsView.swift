@@ -58,7 +58,7 @@ struct DaemonsView: View {
                         }
                     } header: {
                         NativeCollapsibleHeader(
-                            title: String(localized: "\(section.rawValue) (\(onCount(in: groups))/\(groups.count))"),
+                            title: String(localized: "\(ChineseTweaks.text(section.rawValue)) (\(onCount(in: groups))/\(groups.count))"),
                             collapsed: collapsed)
                     }
                 }
@@ -184,7 +184,7 @@ struct DaemonsView: View {
         } else {
             // A group with no spec would be a switch that does nothing. Say so
             // rather than rendering a row that cannot be tapped.
-            Text(group.title)
+            Text(ChineseTweaks.text(group.title))
                 .foregroundStyle(.tertiary)
         }
     }
@@ -204,7 +204,7 @@ struct DaemonsView: View {
     /// and its labels joined (`gui/ios/daemons.py`), and matches the query's
     /// words against all of them.
     private func matchesSearch(_ group: DaemonGroup) -> Bool {
-        searchMatches(query: searchText, group.title, group.name, group.labels.joined(separator: " "))
+        searchMatches(query: searchText, group.title, ChineseTweaks.text(group.title), group.name, group.labels.joined(separator: " "))
     }
 
     /// The reference's `IOSSearchEmpty`: shown only while a query is live and
@@ -336,3 +336,4 @@ private struct DaemonEnableWarningSheet: View {
         .presentationDragIndicator(.visible)
     }
 }
+
